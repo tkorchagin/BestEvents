@@ -18,27 +18,30 @@ def get_all_events(all_number=2000):
     final_data = []
 
     for q in xrange(all_number / limit):
-        offset = q * limit
-        print offset
+        try:
+            offset = q * limit
+            print offset
 
-        data['offset'] = offset
-        r = requests.post("http://api.cultserv.ru/jtransport/partner/%s" % method_name, data=data)
-        json_response = json.loads(r.text)
+            data['offset'] = offset
+            r = requests.post("http://api.cultserv.ru/jtransport/partner/%s" % method_name, data=data)
+            json_response = json.loads(r.text)
 
-        for event in json_response['message']:
-            event_id = event.get('id', 0)
-            title = event.get('title', '')
-            link = event.get('link', '')
-            subevents = event.get('subevents', [])
-            subevents_ids = [el.get('id') for el in subevents]
+            for event in json_response['message']:
+                event_id = event.get('id', 0)
+                title = event.get('title', '')
+                link = event.get('link', '')
+                subevents = event.get('subevents', [])
+                subevents_ids = [el.get('id') for el in subevents]
 
-            temp = {
-                'event_id': event_id,
-                'title': title,
-                'link': link,
-                'subevents_ids': subevents_ids
-            }
-            final_data.append(temp)
+                temp = {
+                    'event_id': event_id,
+                    'title': title,
+                    'link': link,
+                    'subevents_ids': subevents_ids
+                }
+                final_data.append(temp)
+        except Exception, e:
+            continue
     return final_data
 
 
@@ -190,47 +193,51 @@ def get_subevents_info(fn, limit=10):
     jsonData = json.load(open(fn))
     cnt = 0
     for event in jsonData:
-        cnt += 1
-        if cnt > limit:
-            break
-        event_id = event['event_id']
-        for subevent_id in event['subevents_ids']:
-            subevent = get_subevent(subevent_id)
+        try:
+            cnt += 1
+            if cnt > limit:
+                break
+            event_id = event['event_id']
+            for subevent_id in event['subevents_ids']:
+                subevent = get_subevent(subevent_id)
 
-            subevent_data = subevent.get('message')
-            if type(subevent_data) != dict:
-                print 'passed message:', subevent_data
-                continue
+                subevent_data = subevent.get('message')
+                if type(subevent_data) != dict:
+                    print 'passed message:', subevent_data
+                    continue
 
-            commission = subevent_data.get('commission', 0)
-            eticket_possible = subevent_data.get('eticket_possible', False)
-            age = subevent_data.get('age', 0)
-            credit_card_payment = subevent_data.get('credit_card_payment', False)
-            sectors = subevent_data.get('sectors', [])
-            sectors_list = [q['id'] for q in sectors]
-            subevent_date = subevent_data['date']
-            venue_id = subevent_data.get('venue_id')
-            link = subevent_data.get('link')
-            annotation = subevent_data.get('annotation')
-            str_date = subevent_data.get('str_date')
+                commission = subevent_data.get('commission', 0)
+                eticket_possible = subevent_data.get('eticket_possible', False)
+                age = subevent_data.get('age', 0)
+                credit_card_payment = subevent_data.get('credit_card_payment', False)
+                sectors = subevent_data.get('sectors', [])
+                sectors_list = [q['id'] for q in sectors]
+                subevent_date = subevent_data['date']
+                venue_id = subevent_data.get('venue_id')
+                link = subevent_data.get('link')
+                annotation = subevent_data.get('annotation')
+                str_date = subevent_data.get('str_date')
 
-            subevent_info = {
-                'str_date': str_date,
-                'annotation': annotation,
-                'link': link,
-                'venue_id': venue_id,
-                'event_id': event_id,
-                'subevent_id': subevent_id,
-                'subevent_date': subevent_date,
-                'commission': commission,
-                'eticket_possible': eticket_possible,
-                'age': age,
-                'credit_card_payment': credit_card_payment,
-                'sectors_list': sectors_list,
-            }
+                subevent_info = {
+                    'str_date': str_date,
+                    'annotation': annotation,
+                    'link': link,
+                    'venue_id': venue_id,
+                    'event_id': event_id,
+                    'subevent_id': subevent_id,
+                    'subevent_date': subevent_date,
+                    'commission': commission,
+                    'eticket_possible': eticket_possible,
+                    'age': age,
+                    'credit_card_payment': credit_card_payment,
+                    'sectors_list': sectors_list,
+                }
 
-            # print subevent_info
-            final.append(subevent_info)
+                # print subevent_info
+                final.append(subevent_info)
+        except Exception, e:
+            continue
+
     jsonData = {'subevents_info': final}
     return jsonData
 
@@ -241,29 +248,32 @@ def get_tickets_info(fn, limit=10):
     final = []
     jsonData = json.load(open(fn))
     for item in jsonData['subevents_info'][:limit]:
-        subevent_id = item['subevent_id']
-        for sector_id in item['sectors_list']:
-            tickets = get_tickets(subevent_id, sector_id)
-            if tickets is None:
-                continue
-            for t in tickets.get('message', []):
-                price = t.get('price')
-                seat = t.get('seat')
-                ticket_id = t.get('id')
-                row = t.get('row')
-
-                if None in [price, seat, ticket_id, row]:
+        try:
+            subevent_id = item['subevent_id']
+            for sector_id in item['sectors_list']:
+                tickets = get_tickets(subevent_id, sector_id)
+                if tickets is None:
                     continue
+                for t in tickets.get('message', []):
+                    price = t.get('price')
+                    seat = t.get('seat')
+                    ticket_id = t.get('id')
+                    row = t.get('row')
 
-                temp = {
-                    'subevent_id': subevent_id,
-                    'sector_id': sector_id,
-                    'price': price,
-                    'seat': seat,
-                    'ticket_id': ticket_id,
-                    'row': row
-                }
-                final.append(temp)
+                    if None in [price, seat, ticket_id, row]:
+                        continue
+
+                    temp = {
+                        'subevent_id': subevent_id,
+                        'sector_id': sector_id,
+                        'price': price,
+                        'seat': seat,
+                        'ticket_id': ticket_id,
+                        'row': row
+                    }
+                    final.append(temp)
+        except Exception, e:
+            continue
 
     jsonData = {'tickets_info': final}
     return jsonData
@@ -276,38 +286,41 @@ def get_venues_info(fn, limit=10):
     distinct_venues = []
     jsonData = json.load(open(fn))
     for subevent_info in jsonData['subevents_info'][:limit]:
-        venue_id = subevent_info.get('venue_id')
-        if venue_id is None:
+        try:
+            venue_id = subevent_info.get('venue_id')
+            if venue_id is None:
+                continue
+            if venue_id not in distinct_venues:
+                distinct_venues.append(venue_id)
+            else:
+                continue
+
+            venue = get_venue(venue_id)
+            venue_info = venue['message']
+            address = venue_info.get('address', '')
+            description = venue_info.get('description', '')
+            eng_title = venue_info.get('eng_title')
+            google_address = venue_info.get('google_address')
+            title = venue_info.get('title')
+            type = venue_info.get('type')
+            region_id = venue_info.get('region_id')
+            image_global = venue_info.get('image_global')
+
+            temp = {
+                'venue_id': venue_id,
+                'address': address,
+                'description': description,
+                'eng_title': eng_title,
+                'google_address': google_address,
+                'title': title,
+                'type': type,
+                'region_id': region_id,
+                'image_global': image_global,
+            }
+
+            final.append(temp)
+        except Exception, e:
             continue
-        if venue_id not in distinct_venues:
-            distinct_venues.append(venue_id)
-        else:
-            continue
-
-        venue = get_venue(venue_id)
-        venue_info = venue['message']
-        address = venue_info.get('address', '')
-        description = venue_info.get('description', '')
-        eng_title = venue_info.get('eng_title')
-        google_address = venue_info.get('google_address')
-        title = venue_info.get('title')
-        type = venue_info.get('type')
-        region_id = venue_info.get('region_id')
-        image_global = venue_info.get('image_global')
-
-        temp = {
-            'venue_id': venue_id,
-            'address': address,
-            'description': description,
-            'eng_title': eng_title,
-            'google_address': google_address,
-            'title': title,
-            'type': type,
-            'region_id': region_id,
-            'image_global': image_global,
-        }
-
-        final.append(temp)
     jsonData = {'venues_info': final}
     return jsonData
 
@@ -320,15 +333,17 @@ def write_in_json(json_obj, fn):
 if __name__ == '__main__':
     print 'parsers started'
 
+    limit = 1000*1000*1000*1000
+
     json_root = './json/'
-    all_events = get_all_events(all_number=1000)
+    all_events = get_all_events(all_number=15000)
     write_in_json(all_events, json_root + 'all_events.json')
 
-    subevents_info = get_subevents_info(json_root + 'all_events.json', limit=1000)
+    subevents_info = get_subevents_info(json_root + 'all_events.json', limit=limit)
     write_in_json(subevents_info, json_root + 'subevents_info.json')
 
-    venues_info = get_venues_info(json_root + 'subevents_info.json', limit=1000)
+    venues_info = get_venues_info(json_root + 'subevents_info.json', limit=limit)
     write_in_json(venues_info, json_root + 'venues_info.json')
 
-    tickets_info = get_tickets_info(json_root + 'subevents_info.json', limit=1000)
+    tickets_info = get_tickets_info(json_root + 'subevents_info.json', limit=limit)
     write_in_json(tickets_info, json_root + 'tickets_info.json')

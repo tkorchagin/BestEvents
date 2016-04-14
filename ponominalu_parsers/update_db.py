@@ -9,9 +9,17 @@ SessionClass = sessionmaker(bind=engine)
 DBSession = SessionClass()
 
 
-def add_events(fn):
+def add_events(fn, pack_len=5000):
     events = []
-    for el in json.load(open(fn)):
+    cnt = 0
+
+    events_arr = json.load(open(fn))
+    events_len = len(events_arr)
+    for el in events_arr:
+        cnt += 1
+        if cnt % 1000 == 0:
+            print '%d, %.3f%%' % (cnt, 100*float(cnt)/events_len)
+
         event_id = el['event_id']
         title = el['title']
         link = el['link']
@@ -20,9 +28,11 @@ def add_events(fn):
         event = Event(id=event_id, title=link, link=title)
         events.append(event)
 
-    DBSession.add_all(events)
-    DBSession.flush()
-    DBSession.commit()
+        if len(event) % pack_len == 0:
+            DBSession.add_all(events)
+            DBSession.flush()
+            DBSession.commit()
+            events = []
 
 
 def add_subevents(fn):
@@ -67,8 +77,8 @@ def add_subevents(fn):
 
 if __name__ == '__main__':
     print 'hello'
-    # fn = './json/all_events.json'
-    # add_events(fn)
+    fn = './json/all_events.json'
+    add_events(fn)
 
     # fn = './json/subevents_info.json'
     # add_subevents(fn)
