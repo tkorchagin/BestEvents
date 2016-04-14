@@ -50,7 +50,9 @@ def get_json(method_name, data=None):
         data = {}
     data['session'] = SESSION_ID
     r = requests.get("http://api.cultserv.ru/jtransport/partner/%s" % method_name, params=data)
-    if '<!DOCTYPE html>' not in r.text:
+    # r = requests.get("http://api.cultserv.ru/%s" % method_name, params=data)
+    if '<!DOCTYPE html>' not in r.text or '<HTML>' not in r.text:
+        # print r.text
         return json.loads(r.text)
 
 
@@ -89,13 +91,16 @@ def get_actual_events_ids_only():
     return jsonData
 
 
-def get_events(category=THEATRE_CATEGORY_ID, min_date='2016-04-01'):
+def get_events(category=THEATRE_CATEGORY_ID, min_date='2016-04-01', max_date='2017-12-01', limit=10):
     method_name = 'get_events'
     print 'method: "%s"' % method_name
 
     data = {
-        'category': category,
         'min_date': min_date,
+        'max_date': max_date,
+        'limit': limit,
+        'exclude': 'dates',
+        'category': category,
         # 'one_for_event': True,
     }
 
@@ -330,20 +335,32 @@ def write_in_json(json_obj, fn):
         f.write(json.dumps(json_obj, sort_keys=True, indent=4, ensure_ascii=False))
 
 
+def get_categories():
+    method_name = 'v4/categories/list'
+    print 'method: "%s"' % method_name
+    jsonData = get_json(method_name)
+    return jsonData
+
 if __name__ == '__main__':
     print 'parsers started'
 
-    limit = 1000*1000*1000*1000
+    # events = get_events(category='', min_date='2016-04-14')
+    # print events
 
-    json_root = './json/'
-    all_events = get_all_events(all_number=15000)
-    write_in_json(all_events, json_root + 'all_events.json')
-
-    subevents_info = get_subevents_info(json_root + 'all_events.json', limit=limit)
-    write_in_json(subevents_info, json_root + 'subevents_info.json')
-
-    venues_info = get_venues_info(json_root + 'subevents_info.json', limit=limit)
-    write_in_json(venues_info, json_root + 'venues_info.json')
-
-    tickets_info = get_tickets_info(json_root + 'subevents_info.json', limit=limit)
-    write_in_json(tickets_info, json_root + 'tickets_info.json')
+    # print get_categories()
+    print get_subevent(516340)['message']
+    # limit = 1000*1000*1000*1000
+    #
+    # json_root = './json/'
+    # all_events = get_all_events(all_number=200)
+    # print all_events
+    # write_in_json(all_events, json_root + 'all_events.json')
+    #
+    # subevents_info = get_subevents_info(json_root + 'all_events.json', limit=limit)
+    # write_in_json(subevents_info, json_root + 'subevents_info.json')
+    #
+    # venues_info = get_venues_info(json_root + 'subevents_info.json', limit=limit)
+    # write_in_json(venues_info, json_root + 'venues_info.json')
+    #
+    # tickets_info = get_tickets_info(json_root + 'subevents_info.json', limit=limit)
+    # write_in_json(tickets_info, json_root + 'tickets_info.json')

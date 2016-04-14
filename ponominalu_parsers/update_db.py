@@ -9,7 +9,7 @@ SessionClass = sessionmaker(bind=engine)
 DBSession = SessionClass()
 
 
-def add_events(fn, pack_len=5000):
+def add_events(fn, pack_len=500):
     events = []
     cnt = 0
 
@@ -28,7 +28,7 @@ def add_events(fn, pack_len=5000):
         event = Event(id=event_id, title=link, link=title)
         events.append(event)
 
-        if len(event) % pack_len == 0:
+        if len(events) % pack_len == 0:
             DBSession.add_all(events)
             DBSession.flush()
             DBSession.commit()
