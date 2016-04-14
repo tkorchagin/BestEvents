@@ -321,14 +321,14 @@ if __name__ == '__main__':
     print 'parsers started'
 
     json_root = './json/'
-    # all_events = get_all_events(all_number=1000)
-    # write_in_json(all_events, json_root + 'all_events.json')
+    all_events = get_all_events(all_number=1000)
+    write_in_json(all_events, json_root + 'all_events.json')
 
-    # subevents_info = get_subevents_info(json_root + 'all_events.json', limit=1000)
-    # write_in_json(subevents_info, json_root + 'subevents_info.json')
+    subevents_info = get_subevents_info(json_root + 'all_events.json', limit=1000)
+    write_in_json(subevents_info, json_root + 'subevents_info.json')
 
-    # venues_info = get_venues_info(json_root + 'subevents_info.json', limit=1000)
-    # write_in_json(venues_info, json_root + 'venues_info.json')
+    venues_info = get_venues_info(json_root + 'subevents_info.json', limit=1000)
+    write_in_json(venues_info, json_root + 'venues_info.json')
 
     tickets_info = get_tickets_info(json_root + 'subevents_info.json', limit=1000)
     write_in_json(tickets_info, json_root + 'tickets_info.json')
