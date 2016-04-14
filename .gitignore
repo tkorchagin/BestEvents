@@ -1,2 +1,3 @@
 .idea/*
 ponominalu_parsers/tk_constants.py
+!utils/constants.py
