@@ -66,8 +66,9 @@ def add_subevents(fn):
 
 
 if __name__ == '__main__':
+    print 'hello'
     # fn = './json/all_events.json'
     # add_events(fn)
 
-    fn = './json/subevents_info.json'
-    add_subevents(fn)
+    # fn = './json/subevents_info.json'
+    # add_subevents(fn)
