@@ -165,6 +165,8 @@ def get_events_info(events):
         description = event.get('description')
         subevents = event.get('subevents', [])
         subevents_ids = [el['id'] for el in subevents]
+        categories = event.get('categories')
+        categories_ids = [el['id'] for el in categories]
 
         temp = {
             'event_id': event_id,
@@ -172,6 +174,7 @@ def get_events_info(events):
             'description': description,
             'subevents': subevents,
             'subevents_ids': subevents_ids,
+            'categories_id': categories_ids
         }
         events_info.append(temp)
     return events_info
@@ -271,10 +274,10 @@ def get_all_tickets(subevents_info):
 
 
 if __name__ == '__main__':
-    # events = get_events(limit=5000)
-    # print 'events', len(events['message'])
-    # events_info = get_events_info(events)
-    # write_in_json(events_info, './new_json/events_info.json')
+    events = get_events(limit=5000)
+    print 'events', len(events['message'])
+    events_info = get_events_info(events)
+    write_in_json(events_info, './new_json/events_info1.json')
 
     # categories = get_categories(limit=1000)
     # print 'categories', len(categories['message'])
@@ -290,20 +293,20 @@ if __name__ == '__main__':
     # cnt = get_and_write_all_subevents_info(events_info)
     # print 'all_subevents_info', cnt
 
-    for fn in os.listdir('./new_json/'):
-        if 'all_subevents_' not in fn:
-            continue
-        all_subevents_info = json.load(open('./new_json/' + fn))
-        q = fn[fn.rfind('_')+1:fn.rfind('.json')]
-        if q in ['1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '4845']:
-            continue
-        print fn
-
-        all_tickets = get_all_tickets(all_subevents_info)
-        print 'all_tickets', len(all_tickets)
-        write_in_json(all_tickets, './new_json/all_tickets_%s.json' % q)
-
-    regions = get_regions(limit=1000*1000)
-    print 'regions', len(regions['message'])
-    regions_info = get_regions_info(regions)
-    write_in_json(regions_info, './new_json/regions_info.json')
+    # for fn in os.listdir('./new_json/'):
+    #     if 'all_subevents_' not in fn:
+    #         continue
+    #     all_subevents_info = json.load(open('./new_json/' + fn))
+    #     q = fn[fn.rfind('_')+1:fn.rfind('.json')]
+    #     if q in ['1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '4845']:
+    #         continue
+    #     print fn
+    #
+    #     all_tickets = get_all_tickets(all_subevents_info)
+    #     print 'all_tickets', len(all_tickets)
+    #     write_in_json(all_tickets, './new_json/all_tickets_%s.json' % q)
+    #
+    # regions = get_regions(limit=1000*1000)
+    # print 'regions', len(regions['message'])
+    # regions_info = get_regions_info(regions)
+    # write_in_json(regions_info, './new_json/regions_info.json')
