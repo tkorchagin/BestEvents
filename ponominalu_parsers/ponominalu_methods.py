@@ -3,8 +3,10 @@ import codecs
 import json
 import os
 import requests
+import sys
+sys.path.append('../../')
 # from tk_constants import SESSION_ID
-from ponominalu_parsers.tk_constants import SESSION_ID
+from !utils.tk_constants import SESSION_ID
 
 __author__ = 'tkorchagin'
 
@@ -275,7 +277,7 @@ def get_all_tickets(subevents_info):
 
 
 if __name__ == '__main__':
-    events = get_events(limit=10000)
+    events = get_events(limit=7000)
     print 'events', len(events['message'])
     events_info = get_events_info(events)
     write_in_json(events_info, './json/events_info.json')
