@@ -123,15 +123,18 @@ def add_tickets(fn, pack_len=500):
     for item in items:
         cnt += 1
         if cnt % 100 == 0:
-            print 'add_subevents %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+            print 'add_tickets %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
 
         ticket_id = item.get('ticket_id')
-        number = item.get('number')
+        number = int(item.get('number'))
         price = item.get('price')
         row = item.get('row')
         sector_id = item.get('sector_id')
         sector_title = item.get('sector_title')
         status = item.get('status')
+
+        if status != 0:
+            continue
 
         ticket = Ticket(
             id=ticket_id,
@@ -155,12 +158,57 @@ def add_tickets(fn, pack_len=500):
     DBSession.commit()
 
 
+def add_venues(fn, pack_len=500):
+    venues = []
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_venues %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+
+        venue_id = item.get('venue_id')
+        address = item.get('address')
+        title = item.get('title')
+        type_id = item.get('type_id')
+        region_id = item.get('region_id')
+
+        venue = Venue(
+            id=venue_id,
+            address=address,
+            title=title,
+            type_id=type_id,
+            region_id=region_id,
+        )
+        venues.append(venue)
+
+        if len(venues) % pack_len == 0:
+            DBSession.add_all(venues)
+            DBSession.flush()
+            DBSession.commit()
+            venues = []
+
+    DBSession.add_all(venues)
+    DBSession.flush()
+    DBSession.commit()
 
 
 if __name__ == '__main__':
-    print 'hello'
-    fn = './json/all_events.json'
-    add_events(fn)
+    print 'started'
+    root_dir = './new_json/'
 
-    # fn = './json/subevents_info.json'
-    # add_subevents(fn)
+    for fn in root_dir:
+        if 'categories_info' in fn:
+            add_categories(root_dir + fn)
+
+        if 'events_info' in fn:
+            add_events(root_dir + fn)
+
+        if 'all_subevents' in fn:
+            add_subevents(root_dir + fn)
+
+        if 'all_tickets' in fn:
+            add_tickets(root_dir + fn)
+
+        if 'venues_info' in fn:
+            add_venues(root_dir + fn)

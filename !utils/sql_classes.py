@@ -63,7 +63,7 @@ class Venue(DeclBase):
     eng_title = Column(String)
     google_address = Column(String)
     title = Column(String)
-    type = Column(Integer)
+    type_id = Column(Integer)
     region_id = Column(Integer)
     image_global = Column(String)
     source = Column(String, default='ponominalu')
