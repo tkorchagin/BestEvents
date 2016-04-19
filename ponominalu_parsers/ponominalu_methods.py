@@ -3,7 +3,8 @@ import codecs
 import json
 import os
 import requests
-from tk_constants import SESSION_ID
+# from tk_constants import SESSION_ID
+from ponominalu_parsers.tk_constants import SESSION_ID
 
 __author__ = 'tkorchagin'
 
