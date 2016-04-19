@@ -197,18 +197,44 @@ if __name__ == '__main__':
     print 'started'
     root_dir = './new_json/'
 
+    limit = 1
+
+    cnt = 0
     for fn in root_dir:
+        if cnt >= limit:
+            break
         if 'categories_info' in fn:
             add_categories(root_dir + fn)
+            cnt += 1
 
+    cnt = 0
+    for fn in root_dir:
+        if cnt >= limit:
+            break
         if 'events_info' in fn:
             add_events(root_dir + fn)
+            cnt += 1
 
+    cnt = 0
+    for fn in root_dir:
+        if cnt >= limit:
+            break
         if 'all_subevents' in fn:
             add_subevents(root_dir + fn)
+            cnt += 1
 
+    cnt = 0
+    for fn in root_dir:
+        if cnt >= limit:
+            break
         if 'all_tickets' in fn:
             add_tickets(root_dir + fn)
+            cnt += 1
 
+    cnt = 0
+    for fn in root_dir:
+        if cnt >= limit:
+            break
         if 'venues_info' in fn:
             add_venues(root_dir + fn)
+            cnt += 1
