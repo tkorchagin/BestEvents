@@ -3,9 +3,9 @@ import codecs
 import json
 import os
 import requests
-import sys
-sys.path.append('../../')
-from utils.tk_constants import SESSION_ID
+# import sys
+# sys.path.append('../')
+from tk_constants import SESSION_ID
 
 __author__ = 'tkorchagin'
 
@@ -276,32 +276,32 @@ def get_all_tickets(subevents_info):
 
 
 if __name__ == '__main__':
-    events = get_events(limit=7000)
-    print 'events', len(events['message'])
-    events_info = get_events_info(events)
-    write_in_json(events_info, './json/events_info.json')
-
-    categories = get_categories(limit=10000)
-    print 'categories', len(categories['message'])
-    categories_info = get_categories_info(categories)
-    write_in_json(categories_info, './json/categories_info.json')
-
-    venues = get_venues(limit=1000*10000)
-    print 'venues', len(venues['message'])
-    venues_info = get_venues_info(venues)
-    write_in_json(venues_info, './json/venues_info.json')
-
-    events_info = json.load(open('./json/events_info.json'))
-    cnt = get_and_write_all_subevents_info(events_info)
-    print 'all_subevents_info', cnt
+    # events = get_events(limit=7000)
+    # print 'events', len(events['message'])
+    # events_info = get_events_info(events)
+    # write_in_json(events_info, './json/events_info.json')
+    #
+    # categories = get_categories(limit=10000)
+    # print 'categories', len(categories['message'])
+    # categories_info = get_categories_info(categories)
+    # write_in_json(categories_info, './json/categories_info.json')
+    #
+    # venues = get_venues(limit=1000*10000)
+    # print 'venues', len(venues['message'])
+    # venues_info = get_venues_info(venues)
+    # write_in_json(venues_info, './json/venues_info.json')
+    #
+    # events_info = json.load(open('./json/events_info.json'))
+    # cnt = get_and_write_all_subevents_info(events_info)
+    # print 'all_subevents_info', cnt
 
     for fn in os.listdir('./json/'):
         if 'all_subevents_' not in fn:
             continue
         all_subevents_info = json.load(open('./json/' + fn))
         q = fn[fn.rfind('_')+1:fn.rfind('.json')]
-        # if q in ['1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '4845']:
-        #     continue
+        if q in ['1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '4845']:
+            continue
         print fn
 
         all_tickets = get_all_tickets(all_subevents_info)

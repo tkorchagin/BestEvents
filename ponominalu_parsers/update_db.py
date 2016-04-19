@@ -2,7 +2,7 @@ import json
 import os
 import pytz
 import sys
-sys.path.append('../../')
+sys.path.append('../')
 from utils.constants import *
 from utils.sql_classes import *
 
