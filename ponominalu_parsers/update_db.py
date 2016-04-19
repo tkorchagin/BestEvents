@@ -1,8 +1,10 @@
 import json
 import os
 import pytz
-from sql_classes import *
-from constants import *
+import sys
+sys.path.append('../../')
+from utils.constants import *
+from utils.sql_classes import *
 
 __author__ = 'tkorchagin'
 

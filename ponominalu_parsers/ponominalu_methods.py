@@ -5,8 +5,7 @@ import os
 import requests
 import sys
 sys.path.append('../../')
-# from tk_constants import SESSION_ID
-from !utils.tk_constants import SESSION_ID
+from utils.tk_constants import SESSION_ID
 
 __author__ = 'tkorchagin'
 
