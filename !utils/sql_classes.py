@@ -15,7 +15,7 @@ DeclBase = declarative_base()
 class Category(DeclBase):
     __tablename__ = "Categories"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    title = Column(String)
     description = Column(String)
     source = Column(String, default='ponominalu')
 

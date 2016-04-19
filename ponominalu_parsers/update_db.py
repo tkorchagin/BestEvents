@@ -1,4 +1,6 @@
 import json
+import os
+import pytz
 from sql_classes import *
 from constants import *
 
@@ -10,6 +12,7 @@ DBSession = SessionClass()
 
 
 def add_categories(fn, pack_len=500):
+    print fn
     categories = []
     cnt = 0
 
@@ -36,6 +39,7 @@ def add_categories(fn, pack_len=500):
 
 
 def add_events(fn, pack_len=500):
+    print fn
     events = []
     cnt = 0
 
@@ -51,27 +55,19 @@ def add_events(fn, pack_len=500):
         description = el['description']
 
         event = Event(id=event_id, title=title, description=description)
-        events.append(event)
-
-        if len(events) % pack_len == 0:
-            DBSession.add_all(events)
-            DBSession.flush()
-            DBSession.commit()
-            events = []
-
-    DBSession.add_all(events)
-    DBSession.flush()
-    DBSession.commit()
+        DBSession.merge(event)
+        DBSession.commit()
 
 
 def add_subevents(fn, pack_len=500):
+    print fn
     subevents = []
     cnt = 0
     items = json.load(open(fn))
     for item in items:
         cnt += 1
         if cnt % 100 == 0:
-            print 'add_subevents %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+            print 'add_subevents %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
 
         subevent_id = item.get('subevent_id')
         age = item.get('age')
@@ -80,12 +76,12 @@ def add_subevents(fn, pack_len=500):
         eticket_possible = item.get('eticket_possible')
         image = item.get('image')
         link = item.get('link')
-        sectors_list = item.get('sectors_list')
+        sectors_list = item.get('sectors_ids')
 
         subevent_date = item.get('subevent_date')
         if subevent_date is None:
             continue
-        subevent_date = datetime.strptime(subevent_date, '%Y-%m-%dT%H:%M:%S')
+        subevent_date = datetime.datetime.strptime(subevent_date, '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.UTC)
 
         subevent_type = item.get('subevent_type')
         title = item.get('title')
@@ -103,27 +99,19 @@ def add_subevents(fn, pack_len=500):
             subevent_type=subevent_type,
             title=title,
         )
-        subevents.append(subevent)
-
-        if len(subevents) % pack_len == 0:
-            DBSession.add_all(subevents)
-            DBSession.flush()
-            DBSession.commit()
-            subevents = []
-
-    DBSession.add_all(subevents)
-    DBSession.flush()
-    DBSession.commit()
+        DBSession.merge(subevent)
+        DBSession.commit()
 
 
 def add_tickets(fn, pack_len=500):
+    print fn
     tickets = []
     cnt = 0
     items = json.load(open(fn))
     for item in items:
         cnt += 1
         if cnt % 100 == 0:
-            print 'add_tickets %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+            print 'add_tickets %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
 
         ticket_id = item.get('ticket_id')
         number = int(item.get('number'))
@@ -145,27 +133,31 @@ def add_tickets(fn, pack_len=500):
             sector_title=sector_title,
             status=status,
         )
-        tickets.append(ticket)
-
-        if len(tickets) % pack_len == 0:
-            DBSession.add_all(tickets)
-            DBSession.flush()
-            DBSession.commit()
-            tickets = []
-
-    DBSession.add_all(tickets)
-    DBSession.flush()
-    DBSession.commit()
+        DBSession.merge(ticket)
+        DBSession.commit()
+    #
+    #     tickets.append(ticket)
+    #
+    #     if len(tickets) % pack_len == 0:
+    #         DBSession.add_all(tickets)
+    #         DBSession.flush()
+    #         DBSession.commit()
+    #         tickets = []
+    #
+    # DBSession.add_all(tickets)
+    # DBSession.flush()
+    # DBSession.commit()
 
 
 def add_venues(fn, pack_len=500):
+    print fn
     venues = []
     cnt = 0
     items = json.load(open(fn))
     for item in items:
         cnt += 1
         if cnt % 100 == 0:
-            print 'add_venues %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+            print 'add_venues %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
 
         venue_id = item.get('venue_id')
         address = item.get('address')
@@ -180,17 +172,20 @@ def add_venues(fn, pack_len=500):
             type_id=type_id,
             region_id=region_id,
         )
-        venues.append(venue)
+        DBSession.merge(venue)
+        DBSession.commit()
 
-        if len(venues) % pack_len == 0:
-            DBSession.add_all(venues)
-            DBSession.flush()
-            DBSession.commit()
-            venues = []
-
-    DBSession.add_all(venues)
-    DBSession.flush()
-    DBSession.commit()
+    #     venues.append(venue)
+    #
+    #     if len(venues) % pack_len == 0:
+    #         DBSession.add_all(venues)
+    #         DBSession.flush()
+    #         DBSession.commit()
+    #         venues = []
+    #
+    # DBSession.add_all(venues)
+    # DBSession.flush()
+    # DBSession.commit()
 
 
 if __name__ == '__main__':
@@ -199,24 +194,25 @@ if __name__ == '__main__':
 
     limit = 1
 
-    cnt = 0
-    for fn in root_dir:
-        if cnt >= limit:
-            break
-        if 'categories_info' in fn:
-            add_categories(root_dir + fn)
-            cnt += 1
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     print fn
+    #     if cnt >= limit:
+    #         break
+    #     if 'categories_info' in fn:
+    #         add_categories(root_dir + fn)
+    #         cnt += 1
+
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'events_info' in fn:
+    #         add_events(root_dir + fn)
+    #         cnt += 1
 
     cnt = 0
-    for fn in root_dir:
-        if cnt >= limit:
-            break
-        if 'events_info' in fn:
-            add_events(root_dir + fn)
-            cnt += 1
-
-    cnt = 0
-    for fn in root_dir:
+    for fn in os.listdir(root_dir):
         if cnt >= limit:
             break
         if 'all_subevents' in fn:
@@ -224,7 +220,7 @@ if __name__ == '__main__':
             cnt += 1
 
     cnt = 0
-    for fn in root_dir:
+    for fn in os.listdir(root_dir):
         if cnt >= limit:
             break
         if 'all_tickets' in fn:
@@ -232,7 +228,7 @@ if __name__ == '__main__':
             cnt += 1
 
     cnt = 0
-    for fn in root_dir:
+    for fn in os.listdir(root_dir):
         if cnt >= limit:
             break
         if 'venues_info' in fn:
