@@ -9,6 +9,32 @@ SessionClass = sessionmaker(bind=engine)
 DBSession = SessionClass()
 
 
+def add_categories(fn, pack_len=500):
+    categories = []
+    cnt = 0
+
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_categories %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
+        category_id = item['category_id']
+        title = item['title']
+
+        category = Category(id=category_id, title=title)
+        categories.append(category)
+
+        if len(categories) % pack_len == 0:
+            DBSession.add_all(categories)
+            DBSession.flush()
+            DBSession.commit()
+            categories = []
+
+    DBSession.add_all(categories)
+    DBSession.flush()
+    DBSession.commit()
+
+
 def add_events(fn, pack_len=500):
     events = []
     cnt = 0
@@ -17,15 +43,14 @@ def add_events(fn, pack_len=500):
     events_len = len(events_arr)
     for el in events_arr:
         cnt += 1
-        if cnt % 1000 == 0:
-            print '%d, %.3f%%' % (cnt, 100*float(cnt)/events_len)
+        if cnt % 100 == 0:
+            print 'add_events %d, %.3f%%' % (cnt, 100 * float(cnt) / events_len)
 
         event_id = el['event_id']
         title = el['title']
-        link = el['link']
-        print title
+        description = el['description']
 
-        event = Event(id=event_id, title=link, link=title)
+        event = Event(id=event_id, title=title, description=description)
         events.append(event)
 
         if len(events) % pack_len == 0:
@@ -34,45 +59,102 @@ def add_events(fn, pack_len=500):
             DBSession.commit()
             events = []
 
+    DBSession.add_all(events)
+    DBSession.flush()
+    DBSession.commit()
 
-def add_subevents(fn):
+
+def add_subevents(fn, pack_len=500):
     subevents = []
-    for el in json.load(open(fn))['subevents_info']:
-        subevent_id = el['subevent_id']
-        print subevent_id
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_subevents %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
 
-        # str_date = el['str_date']
-        # annotation = el['annotation']
-        # link = el['link']
-        # venue_id = el['venue_id']
-        # event_id = el['event_id']
-        # subevent_date = el['subevent_date']
-        # commission = el['commission']
-        # eticket_possible = el['eticket_possible']
-        # age = el['age']
-        # credit_card_payment = el['credit_card_payment']
-        # sectors_list = el['sectors_list']
+        subevent_id = item.get('subevent_id')
+        age = item.get('age')
+        description = item.get('description')
+        eticket_only = item.get('eticket_only')
+        eticket_possible = item.get('eticket_possible')
+        image = item.get('image')
+        link = item.get('link')
+        sectors_list = item.get('sectors_list')
 
-        if el['subevent_date'] is None or el['str_date'] is None:
+        subevent_date = item.get('subevent_date')
+        if subevent_date is None:
             continue
+        subevent_date = datetime.strptime(subevent_date, '%Y-%m-%dT%H:%M:%S')
+
+        subevent_type = item.get('subevent_type')
+        title = item.get('title')
 
         subevent = Subevent(
-            id=el['subevent_id'],
-            str_date=el['str_date'],
-            annotation=el['annotation'],
-            link=el['link'],
-            subevent_date=datetime.datetime.fromtimestamp(el['subevent_date'] / 1000),
-            commission=el['commission'],
-            eticket_possible=el['eticket_possible'],
-            age=el['age'],
-            credit_card_payment=el['credit_card_payment'],
-            sectors_list=el['sectors_list']
+            id=subevent_id,
+            age=age,
+            description=description,
+            eticket_only=eticket_only,
+            eticket_possible=eticket_possible,
+            image=image,
+            link=link,
+            sectors_list=sectors_list,
+            subevent_date=subevent_date,
+            subevent_type=subevent_type,
+            title=title,
         )
         subevents.append(subevent)
+
+        if len(subevents) % pack_len == 0:
+            DBSession.add_all(subevents)
+            DBSession.flush()
+            DBSession.commit()
+            subevents = []
 
     DBSession.add_all(subevents)
     DBSession.flush()
     DBSession.commit()
+
+
+def add_tickets(fn, pack_len=500):
+    tickets = []
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_subevents %d, %.3f%%' % (cnt, 100 * float(cnt) / items)
+
+        ticket_id = item.get('ticket_id')
+        number = item.get('number')
+        price = item.get('price')
+        row = item.get('row')
+        sector_id = item.get('sector_id')
+        sector_title = item.get('sector_title')
+        status = item.get('status')
+
+        ticket = Ticket(
+            id=ticket_id,
+            number=number,
+            price=price,
+            row=row,
+            sector_id=sector_id,
+            sector_title=sector_title,
+            status=status,
+        )
+        tickets.append(ticket)
+
+        if len(tickets) % pack_len == 0:
+            DBSession.add_all(tickets)
+            DBSession.flush()
+            DBSession.commit()
+            tickets = []
+
+    DBSession.add_all(tickets)
+    DBSession.flush()
+    DBSession.commit()
+
+
 
 
 if __name__ == '__main__':

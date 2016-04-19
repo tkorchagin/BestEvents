@@ -12,12 +12,24 @@ from sqlalchemy.orm import sessionmaker
 DeclBase = declarative_base()
 
 
+class Category(DeclBase):
+    __tablename__ = "Categories"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+    source = Column(String, default='ponominalu')
+
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
+
+
 class Event(DeclBase):
     __tablename__ = "Events"
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
-    link = Column(String)
+    description = Column(String)
+    source = Column(String, default='ponominalu')
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
     updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -26,16 +38,18 @@ class Subevent(DeclBase):
     __tablename__ = "Subevents"
 
     id = Column(Integer, primary_key=True)
-    str_date = Column(String)
-    annotation = Column(String)
-    link = Column(String)
-    subevent_date = Column(DateTime)
-    commission = Column(Integer)
-    eticket_possible = Column(Boolean, default=False)
     age = Column(Integer, default=0)
-    credit_card_payment = Column(Boolean, default=False)
+    description = Column(String)
+    eticket_only = Column(Boolean, default=False)
+    eticket_possible = Column(Boolean, default=False)
+    image = Column(String)
+    link = Column(String)
     sectors_list = Column(ARRAY(Integer))
-    source = Column(String)
+    subevent_date = Column(DateTime)
+    subevent_type = Column(DateTime)
+    title = Column(DateTime)
+    source = Column(String, default='ponominalu')
+
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
     updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -52,6 +66,8 @@ class Venue(DeclBase):
     type = Column(Integer)
     region_id = Column(Integer)
     image_global = Column(String)
+    source = Column(String, default='ponominalu')
+
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
     updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
 
@@ -60,10 +76,15 @@ class Ticket(DeclBase):
     __tablename__ = "Tickets"
 
     id = Column(Integer, primary_key=True)
-    sector_id = Column(Integer)
+
+    number = Column(Integer)
     price = Column(Float)
-    seat = Column(Integer)
     row = Column(Integer)
+    sector_id = Column(Integer)
+    sector_title = Column(String)
+    status = Column(Integer)
+    source = Column(String, default='ponominalu')
+
     createdAt = Column(DateTime, default=datetime.datetime.utcnow)
     updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
 
