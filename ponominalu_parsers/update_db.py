@@ -190,7 +190,7 @@ def add_venues(fn, pack_len=500):
 
 if __name__ == '__main__':
     print 'started'
-    root_dir = './new_json/'
+    root_dir = './json/'
 
     limit = 1
 
