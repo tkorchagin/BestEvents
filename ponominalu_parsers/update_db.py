@@ -117,7 +117,7 @@ def add_tickets(fn, pack_len=500):
         number = int(item.get('number'))
         price = item.get('price')
         row = item.get('row')
-        sector_id = item.get('sector_id')
+        sector_id = item.get('sectior_id')
         sector_title = item.get('sector_title')
         status = item.get('status')
 
@@ -211,21 +211,21 @@ if __name__ == '__main__':
     #         add_events(root_dir + fn)
     #         cnt += 1
 
-    cnt = 0
-    for fn in os.listdir(root_dir):
-        if cnt >= limit:
-            break
-        if 'all_subevents' in fn:
-            add_subevents(root_dir + fn)
-            cnt += 1
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'all_subevents' in fn:
+    #         add_subevents(root_dir + fn)
+    #         cnt += 1
 
-    cnt = 0
-    for fn in os.listdir(root_dir):
-        if cnt >= limit:
-            break
-        if 'all_tickets' in fn:
-            add_tickets(root_dir + fn)
-            cnt += 1
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'all_tickets' in fn:
+    #         add_tickets(root_dir + fn)
+    #         cnt += 1
 
     cnt = 0
     for fn in os.listdir(root_dir):
