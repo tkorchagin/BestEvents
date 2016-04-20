@@ -299,8 +299,8 @@ if __name__ == '__main__':
         if 'all_subevents_' not in fn:
             continue
         all_subevents_info = json.load(open('./json/' + fn))
-        q = fn[fn.rfind('_')+1:fn.rfind('.json')]
-        if q in ['1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '4845']:
+        q = fn[fn.rfind('_') + 1:fn.rfind('.json')]
+        if q in ['3000', '4595', '1500', '3500', '500', '2000', '4000', '2500', '4500', '1000']:
             continue
         print fn
 
@@ -308,7 +308,7 @@ if __name__ == '__main__':
         print 'all_tickets', len(all_tickets)
         write_in_json(all_tickets, './json/all_tickets_%s.json' % q)
 
-    regions = get_regions(limit=1000*1000)
-    print 'regions', len(regions['message'])
-    regions_info = get_regions_info(regions)
-    write_in_json(regions_info, './json/regions_info.json')
+        # regions = get_regions(limit=1000*1000)
+        # print 'regions', len(regions['message'])
+        # regions_info = get_regions_info(regions)
+        # write_in_json(regions_info, './json/regions_info.json')

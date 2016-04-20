@@ -2,6 +2,7 @@ import json
 import os
 import pytz
 import sys
+
 sys.path.append('../')
 from utils.constants import *
 from utils.sql_classes import *
@@ -27,17 +28,8 @@ def add_categories(fn, pack_len=500):
         title = item['title']
 
         category = Category(id=category_id, title=title)
-        categories.append(category)
-
-        if len(categories) % pack_len == 0:
-            DBSession.add_all(categories)
-            DBSession.flush()
-            DBSession.commit()
-            categories = []
-
-    DBSession.add_all(categories)
-    DBSession.flush()
-    DBSession.commit()
+        DBSession.merge(category)
+        DBSession.commit()
 
 
 def add_events(fn, pack_len=500):
@@ -137,18 +129,18 @@ def add_tickets(fn, pack_len=500):
         )
         DBSession.merge(ticket)
         DBSession.commit()
-    #
-    #     tickets.append(ticket)
-    #
-    #     if len(tickets) % pack_len == 0:
-    #         DBSession.add_all(tickets)
-    #         DBSession.flush()
-    #         DBSession.commit()
-    #         tickets = []
-    #
-    # DBSession.add_all(tickets)
-    # DBSession.flush()
-    # DBSession.commit()
+        #
+        #     tickets.append(ticket)
+        #
+        #     if len(tickets) % pack_len == 0:
+        #         DBSession.add_all(tickets)
+        #         DBSession.flush()
+        #         DBSession.commit()
+        #         tickets = []
+        #
+        # DBSession.add_all(tickets)
+        # DBSession.flush()
+        # DBSession.commit()
 
 
 def add_venues(fn, pack_len=500):
@@ -177,57 +169,57 @@ def add_venues(fn, pack_len=500):
         DBSession.merge(venue)
         DBSession.commit()
 
-    #     venues.append(venue)
-    #
-    #     if len(venues) % pack_len == 0:
-    #         DBSession.add_all(venues)
-    #         DBSession.flush()
-    #         DBSession.commit()
-    #         venues = []
-    #
-    # DBSession.add_all(venues)
-    # DBSession.flush()
-    # DBSession.commit()
+        #     venues.append(venue)
+        #
+        #     if len(venues) % pack_len == 0:
+        #         DBSession.add_all(venues)
+        #         DBSession.flush()
+        #         DBSession.commit()
+        #         venues = []
+        #
+        # DBSession.add_all(venues)
+        # DBSession.flush()
+        # DBSession.commit()
 
 
 if __name__ == '__main__':
     print 'started'
     root_dir = './json/'
 
-    limit = 1
+    limit = 100
 
-    # cnt = 0
-    # for fn in os.listdir(root_dir):
-    #     print fn
-    #     if cnt >= limit:
-    #         break
-    #     if 'categories_info' in fn:
-    #         add_categories(root_dir + fn)
-    #         cnt += 1
+    cnt = 0
+    for fn in os.listdir(root_dir):
+        print fn
+        if cnt >= limit:
+            break
+        if 'categories_info' in fn:
+            add_categories(root_dir + fn)
+            cnt += 1
 
-    # cnt = 0
-    # for fn in os.listdir(root_dir):
-    #     if cnt >= limit:
-    #         break
-    #     if 'events_info' in fn:
-    #         add_events(root_dir + fn)
-    #         cnt += 1
+    cnt = 0
+    for fn in os.listdir(root_dir):
+        if cnt >= limit:
+            break
+        if 'events_info' in fn:
+            add_events(root_dir + fn)
+            cnt += 1
 
-    # cnt = 0
-    # for fn in os.listdir(root_dir):
-    #     if cnt >= limit:
-    #         break
-    #     if 'all_subevents' in fn:
-    #         add_subevents(root_dir + fn)
-    #         cnt += 1
+    cnt = 0
+    for fn in os.listdir(root_dir):
+        if cnt >= limit:
+            break
+        if 'all_subevents' in fn:
+            add_subevents(root_dir + fn)
+            cnt += 1
 
-    # cnt = 0
-    # for fn in os.listdir(root_dir):
-    #     if cnt >= limit:
-    #         break
-    #     if 'all_tickets' in fn:
-    #         add_tickets(root_dir + fn)
-    #         cnt += 1
+    cnt = 0
+    for fn in os.listdir(root_dir):
+        if cnt >= limit:
+            break
+        if 'all_tickets' in fn:
+            add_tickets(root_dir + fn)
+            cnt += 1
 
     cnt = 0
     for fn in os.listdir(root_dir):
