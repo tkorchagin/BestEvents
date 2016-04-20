@@ -300,7 +300,7 @@ if __name__ == '__main__':
             continue
         all_subevents_info = json.load(open('./json/' + fn))
         q = fn[fn.rfind('_') + 1:fn.rfind('.json')]
-        if q in ['3000', '4595', '1500', '3500', '500', '2000', '4000', '2500', '4500', '1000']:
+        if q in ['3000', '4595', '1500', '500', '2000', '4000', '2500', '4500', '1000', '3500',]:
             continue
         print fn
 
