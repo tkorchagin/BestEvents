@@ -182,6 +182,82 @@ def add_venues(fn, pack_len=500):
         # DBSession.commit()
 
 
+def add_EventSubevent(fn):
+    print fn
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_EventSubevent %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
+        event_id = item['event_id']
+        for subevent_id in item['subevents_ids']:
+            try:
+                row = EventSubevent(EventId=event_id, SubeventId=subevent_id)
+                DBSession.merge(row)
+                DBSession.commit()
+            except Exception, e:
+                print 'passed add_EventSubevent', subevent_id, event_id
+                continue
+
+
+def add_EventCategory(fn):
+    print fn
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_EventCategory %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
+        event_id = item['event_id']
+        for categories_id in item['categories_id']:
+            try:
+                row = EventCategory(EventId=event_id, CategoryId=categories_id)
+                DBSession.merge(row)
+                DBSession.commit()
+            except Exception, e:
+                print 'passed add_EventCategory', event_id, categories_id
+                continue
+
+
+def add_VenueSubEvent(fn):
+    print fn
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        if cnt % 100 == 0:
+            print 'add_VenueSubEvent %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
+        venue_id = item['venue_id']
+        subevent_id = item['subevent_id']
+        try:
+            row = VenueSubEvent(VenueId=venue_id, SubeventId=subevent_id)
+            DBSession.merge(row)
+            DBSession.commit()
+        except Exception, e:
+            print 'passed add_VenueSubEvent', venue_id, subevent_id
+            continue
+
+
+def add_SubEventTicket(fn):
+    print fn
+    cnt = 0
+    items = json.load(open(fn))
+    for item in items:
+        cnt += 1
+        # if cnt % 100 == 0:
+        #     print 'add_SubEventTicket %d, %.3f%%' % (cnt, 100 * float(cnt) / len(items))
+        ticket_id = item['ticket_id']
+        subevent_id = item['subevent_id']
+        try:
+            row = SubEventTicket(TicketId=ticket_id, SubeventId=subevent_id)
+            DBSession.merge(row)
+            DBSession.commit()
+        except Exception, e:
+            # print 'passed add_SubEventTicket', ticket_id, subevent_id
+            continue
+
+
 if __name__ == '__main__':
     print 'started'
     root_dir = './json/'
@@ -213,18 +289,18 @@ if __name__ == '__main__':
     #         add_subevents(root_dir + fn)
     #         cnt += 1
 
-    cnt = 0
-    for fn in os.listdir(root_dir):
-        # if cnt < 3:
-        #     continue
-        # if '3500' in fn:
-        #     continue
-
-        if cnt >= limit:
-            break
-        if 'all_tickets' in fn:
-            add_tickets(root_dir + fn)
-            cnt += 1
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     # if cnt < 3:
+    #     #     continue
+    #     # if '3500' in fn:
+    #     #     continue
+    #
+    #     if cnt >= limit:
+    #         break
+    #     if 'all_tickets' in fn:
+    #         add_tickets(root_dir + fn)
+    #         cnt += 1
 
     # cnt = 0
     # for fn in os.listdir(root_dir):
@@ -232,4 +308,39 @@ if __name__ == '__main__':
     #         break
     #     if 'venues_info' in fn:
     #         add_venues(root_dir + fn)
+    #         cnt += 1
+
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'events_info' in fn:
+    #         add_EventSubevent(root_dir + fn)
+    #         cnt += 1
+
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'events_info' in fn:
+    #         add_EventCategory(root_dir + fn)
+    #         cnt += 1
+
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'all_subevents' in fn:
+    #         add_VenueSubEvent(root_dir + fn)
+    #         cnt += 1
+
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if any(el in fn for el in ['4500', '4595', '4000', '3500', '2500', '2000', '3000', ]):
+    #         continue
+    #     if cnt >= limit:
+    #         break
+    #     if 'all_tickets' in fn:
+    #         # print fn
+    #         add_SubEventTicket(root_dir + fn)
     #         cnt += 1

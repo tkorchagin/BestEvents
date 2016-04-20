@@ -89,6 +89,42 @@ class Ticket(DeclBase):
     updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
 
 
+
+class EventSubevent(DeclBase):
+    __tablename__ = "EventSubevent"
+    SubeventId = Column(Integer, primary_key=True)
+    EventId = Column(Integer, primary_key=True)
+
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class EventCategory(DeclBase):
+    __tablename__ = "EventCategory"
+    CategoryId = Column(Integer, primary_key=True)
+    EventId = Column(Integer, primary_key=True)
+
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class VenueSubEvent(DeclBase):
+    __tablename__ = "VenueSubEvent"
+    SubeventId = Column(Integer, primary_key=True)
+    VenueId = Column(Integer, primary_key=True)
+
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class SubEventTicket(DeclBase):
+    __tablename__ = "SubEventTicket"
+    SubeventId = Column(Integer, primary_key=True)
+    TicketId = Column(Integer, primary_key=True)
+
+    createdAt = Column(DateTime, default=datetime.datetime.utcnow)
+    updatedAt = Column(DateTime, default=datetime.datetime.utcnow)
+
 if __name__ == '__main__':
     from constants import DB_PATH
 
