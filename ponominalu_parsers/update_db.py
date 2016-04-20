@@ -215,16 +215,21 @@ if __name__ == '__main__':
 
     cnt = 0
     for fn in os.listdir(root_dir):
+        # if cnt < 3:
+        #     continue
+        # if '3500' in fn:
+        #     continue
+
         if cnt >= limit:
             break
         if 'all_tickets' in fn:
             add_tickets(root_dir + fn)
             cnt += 1
 
-    cnt = 0
-    for fn in os.listdir(root_dir):
-        if cnt >= limit:
-            break
-        if 'venues_info' in fn:
-            add_venues(root_dir + fn)
-            cnt += 1
+    # cnt = 0
+    # for fn in os.listdir(root_dir):
+    #     if cnt >= limit:
+    #         break
+    #     if 'venues_info' in fn:
+    #         add_venues(root_dir + fn)
+    #         cnt += 1
